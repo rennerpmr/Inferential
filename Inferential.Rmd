@@ -1,0 +1,32 @@
+---
+title: "Simulation Exercise"
+author: "Phil Renner"
+date: "3/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## Overview
+
+## Simulations
+
+## Sample Mean vs Theoretical Mean
+
+## Sample Variance vs Theoretical Variance
+
+## Distribution
+
+
+
+```{r simulation}
+mns = NULL
+for (i in 1 : 10000) mns = c(mns, mean(rexp(40, 0.2)))
+#plot histogram with mean as red line
+g<- ggplot(data.frame(data = mns), aes(x=mns)) + geom_histogram(color="black", fill= "blue") +geom_vline(aes(xintercept = mean(mns)),col='red',size=2)
+g
+mean(mns)
+```
