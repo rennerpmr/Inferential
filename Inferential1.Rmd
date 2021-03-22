@@ -1,0 +1,109 @@
+---
+title: "Course Project: Inferential Statistics"
+author: "Phil Renner"
+date: "3/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## Part 1: Simulating the Exponential Distribution
+
+## Overview
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials. You should
+
+Show the sample mean and compare it to the theoretical mean of the distribution.
+Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+Show that the distribution is approximately normal.
+In point 3, focus on the difference between the distribution of a large collection of random exponentials and the distribution of a large collection of averages of 40 exponentials.
+
+## Simulations
+I simulated the exponential distribution using rexp(40, 0.2), specifying 40 observations in each simulation with lambda = 0.2. I ran the simulation 1,000 times, creating vectors of 1,000 means and standard deviations.
+
+
+```{r simulation}
+set.seed(2021)
+lambda <- 0.2
+n_obs <- 40
+mns = NULL
+for (i in 1 : 1000) mns = c(mns, mean(rexp(n_obs, lambda)))
+
+str(mns)
+summary(mns)
+
+stdvs = NULL
+for (i in 1 : 1000) stdvs = c(stdvs, sqrt(var(rexp(n_obs, lambda))))
+
+str(stdvs)
+summary(stdvs)
+
+```
+
+
+## Analysis
+## Question 1: Sample Mean vs Theoretical Mean
+
+The theoretical mean for the exponential distribution is 1/lambda. In this case, lambda = 0.2 and the theoretical mean of each simulated distribution is 5.0. I plotted the mean of each simulation on a histogram. I also plotted the mean on the histogram. The mean of the means of the simulated distributions is `r mean(mns)`, so the simulated mean is very similar to the theoretical mean.
+
+note add this to the plots to get normal
+ geom_density(colour="blue", size=1) +
+  scale_x_continuous(breaks=seq(mu-3,mu+3,1), limits=c(mu-3,mu+3))  +
+  stat_function(fun = dnorm, args = list(mean = mu , sd = sd), colour = "red", size=1)
+
+
+```{r means}
+
+#plot histogram with mean as red line
+g<- ggplot(data.frame(data = mns), aes(x=mns)) + geom_histogram(color="black", fill= "blue") +geom_vline(aes(xintercept = mean(mns)),col='red',size=2)+
+  stat_function(fun = dnorm, args = list(mean = 5 , sd = 5), colour = "red", size=1)
+g
+
+```
+
+
+
+## Analysis
+## Question 2: Sample Variance vs Theoretical Variance
+The theoretical standard deviation for the exponential distribution is 1/lambda/sqrt(n). We can calculate this theoretical standard deviation and compare it to the standard deviation of the simulated data. 
+
+As you can see below, the observed and theoretical variance and standard deviation are nearly identical
+
+
+
+
+```{r variance comparison}
+#theoretical standard deviation
+1/lambda/sqrt(n_obs)
+
+#observed standard deviation
+sd(mns)
+
+#theoretical variance
+(1/lambda/sqrt(n_obs))^2
+  
+#observed variance  
+sd(mns)^2 
+
+
+```
+
+
+
+## Analysis
+## Question 3: Distribution
+The Central Limit Theorem holds that the means of a distribution are normally distributed. We will plot the means of the exponential functions. As you can see in the plot, the means are approximately normally distributed.
+
+```{r normal}
+
+#plot histogram with smoothed distribution and normal
+g<- ggplot(data.frame(data = mns), aes(x=mns)) + geom_histogram(color="black", fill= "blue")+ 
+ geom_density(aes(y=..count../5))  
+ # stat_function(fun = dnorm, args = list(mean = 5 , sd = 5), colour = "red", size=1)
+g
+
+```

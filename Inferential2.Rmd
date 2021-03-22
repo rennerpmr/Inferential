@@ -1,0 +1,84 @@
+---
+title: "Course Project: Inferential Statistics"
+author: "Phil Renner"
+date: "3/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+
+
+## Part 2: Understanding Tooth Growth
+
+## Overview
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+
+Load the ToothGrowth data and perform some basic exploratory data analyses
+1. Provide a basic summary of the data.
+2. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+3. State your conclusions and the assumptions needed for your conclusions.
+
+ToothGrowth data set
+The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC). Source: C. I. Bliss (1952). The Statistics of Bioassay. Academic Press
+
+## Exploratory Analysis
+```{r tooth}
+#load tooth growth data
+data("ToothGrowth")
+
+#look at summaries of the data
+head(ToothGrowth)
+summary(ToothGrowth)
+str(ToothGrowth)
+
+#plot it
+g1 <- ggplot(aes(x = supp, y = len), data = ToothGrowth) +
+  geom_boxplot(aes(fill = supp))+labs(x="Supplement",y="Tooth Length")
+g1
+
+g2<-ggplot(aes(x = factor(dose), y = len), data = ToothGrowth) + 
+    geom_boxplot(aes(fill = factor(dose)))+labs(x="Dose",y="Tooth Length")
+g2
+
+g3<- ggplot(aes(x = supp, y = len), data = ToothGrowth) +
+    geom_boxplot(aes(fill = supp)) + facet_wrap(~ dose)+labs(x="Supplement",y="Tooth Length")
+g3
+
+
+
+```
+
+## Hypothesis Testing
+
+
+
+
+``` {r tooth testing}
+t.test(len ~ supp, data = ToothGrowth)
+t.test(len ~ dose, data = subset(ToothGrowth, ToothGrowth$dose %in% c(0.5, 1.0)))
+t.test(len ~ dose, data = subset(ToothGrowth, ToothGrowth$dose %in% c(0.5, 2.0)))
+t.test(len ~ dose, data = subset(ToothGrowth, ToothGrowth$dose %in% c(2.0, 1.0)))
+
+```
+
+Conclusions
+
+Question 1; Does tooth growth vary depending on which supplement was used?
+H0: Delivery Method does not have an effect Tooth Length
+Ha: Delivery Method does have an effect on Tooth Length
+Result: The p-value is greater than 0.5, and the confidence interval includes 0, so we cannot reject the null hypothesis. There does not seem to be a relationship between delivery method and tooth growth.
+
+Question 2; Does tooth growth vary depending on which dose level was used?
+H0: Supplement dose does not have an effect Tooth Length
+Ha: Supplement dose does have an effect on Tooth Length
+Result: The p-value for each pairing is less than 0.5, and the confidence intervals do not include 0, so we can reject the null hypothesis. There does seem to be a relationship between supplement dose and tooth growth.
+
+We can conclude that supplement dosage effects tooth growth in guinea pigs, but that the delivery method of that supplement does not have an effect on tooth growth. This conclusion is based on the assumption that the sample of guinea pigs is representative of the population as a whole and that the data was collected in a way that did not introduce any biases into the data.
+
+
+
+
